@@ -19,6 +19,7 @@ import com.rl4j.Dimension;
 import com.rl4j.Game;
 import com.rl4j.Roguelike;
 import com.rl4j.event.Event;
+import com.rl4j.event.MouseEvent.MouseButtonEvent;
 import com.rl4j.ui.Box;
 
 public class CitiesRL implements Game {
@@ -59,6 +60,15 @@ public class CitiesRL implements Game {
 
     @Override
     public void handle(final Event event) {
+        event.as(MouseButtonEvent.class) //
+                        .ifPresent(mouseButtonEvent -> {
+                            if (mouseButtonEvent.isPressed() && //
+                            mouseButtonEvent.getButton() == MouseButtonEvent.Button.LEFT && //
+                            mouseButtonEvent.getColumn() == roguelike.getSize().getWidth() - 3 && //
+                            mouseButtonEvent.getRow() == 0) {
+                                roguelike.stop();
+                            }
+                        });
 
     }
 
