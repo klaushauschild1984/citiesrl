@@ -23,6 +23,7 @@ import com.rl4j.Update;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 
 public class Terrain implements Update, Draw {
 
@@ -31,6 +32,8 @@ public class Terrain implements Update, Draw {
 
     private int offsetColumn;
     private int offsetRow;
+
+    private float time;
 
     public Terrain(final Dimension size, final Random random) {
         tiles = new Tile[size.getWidth()][size.getHeight()];
@@ -43,6 +46,7 @@ public class Terrain implements Update, Draw {
                     tiles[column][row] = new Tile(Ground.RIVER);
                 } else {
                     tiles[column][row] = new Tile(Ground.DIRT);
+                    tiles[column][row].setDecoration(random.nextFloat() < 0.2f);
                     if (value > 0.8) {
                         tiles[column][row] = new Tile(Ground.TREE);
                     }
@@ -59,13 +63,15 @@ public class Terrain implements Update, Draw {
                 final Tile tile = tiles[column][row];
                 switch (tile.getGround()) {
                     case DIRT:
-                        console.put(' ', column, row, null, Palette.DIRT);
+                        console.put(tile.isDecoration() ? '.' : ' ', column, row, Palette.ROCK,
+                                        Palette.DIRT);
                         break;
                     case TREE:
                         console.put('*', column, row, Palette.TREE, Palette.DIRT);
                         break;
                     case RIVER:
-                        console.put(' ', column, row, Palette.WAVE, Palette.RIVER);
+                        console.put(tile.isDecoration() ? '~' : ' ', column, row, Palette.WAVE,
+                                        Palette.RIVER);
                         break;
                 }
 
@@ -75,7 +81,19 @@ public class Terrain implements Update, Draw {
 
     @Override
     public void update(final float elapsed) {
-
+        time += elapsed;
+        if (time > 0.5f) {
+            time = 0;
+            for (int column = 1; column < tiles.length - 1; column++) {
+                for (int row = 1; row < tiles[column].length - 1; row++) {
+                    final Tile tile = tiles[column][row];
+                    if (tile.getGround() != Ground.RIVER) {
+                        continue;
+                    }
+                    tile.setDecoration(random.nextFloat() < 0.25);
+                }
+            }
+        }
     }
 
     enum Ground {
@@ -93,6 +111,10 @@ public class Terrain implements Update, Draw {
     class Tile {
 
         private final Ground ground;
+
+        @Getter
+        @Setter
+        private boolean decoration;
 
     }
 

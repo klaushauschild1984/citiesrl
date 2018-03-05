@@ -20,10 +20,12 @@ public interface Palette {
 
     Color DIRT = new Color(170, 85, 0);
 
-    Color RIVER = Color.BLUE;
+    Color ROCK = new Color(200, 115, 30);
 
-    Color WAVE = Color.BLUE.brighter();
+    Color RIVER = new Color(0, 0, 255);
 
-    Color TREE = Color.GREEN.darker();
+    Color WAVE = new Color(0, 0, 200);
+
+    Color TREE = new Color(0, 200, 0);
 
 }

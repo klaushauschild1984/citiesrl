@@ -18,12 +18,14 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+
 import com.rl4j.Backbuffer;
 import com.rl4j.Draw;
 import com.rl4j.Update;
 import com.rl4j.event.Event;
 import com.rl4j.event.Handler;
 import com.rl4j.event.KeyboardEvent;
+
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -44,7 +46,6 @@ public class Date implements Update, Draw, Handler {
 
     @Override
     public void draw(final Backbuffer console) {
-
         final String dateString =
                         String.format("%s %s", dateFormat.format(date), speed.getSymbol());
         console.put(dateString, 1, console.getSize().getHeight() - 1);
