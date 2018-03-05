@@ -14,12 +14,14 @@
 
 package com.citiesrl;
 
+import java.awt.Color;
 import com.rl4j.Backbuffer;
 import com.rl4j.Dimension;
 import com.rl4j.Game;
 import com.rl4j.Roguelike;
 import com.rl4j.event.Event;
 import com.rl4j.event.MouseEvent.MouseButtonEvent;
+import com.rl4j.event.MouseEvent.MouseMoveEvent;
 import com.rl4j.ui.Box;
 
 public class CitiesRL implements Game {
@@ -27,6 +29,8 @@ public class CitiesRL implements Game {
     private final Roguelike roguelike;
     private final Box gameBorder;
     private final Terrain terrain;
+
+    private boolean highlightQuitX;
 
     public CitiesRL(final Roguelike roguelike) {
         this.roguelike = roguelike;
@@ -36,19 +40,14 @@ public class CitiesRL implements Game {
         terrain = new Terrain(size);
     }
 
-    public static void main(final String[] args) {
-        final Roguelike roguelike = Roguelike.builder() //
-                        .fpsLimit(30) //
-                        .borderless(true) //
-                        .build();
-        final CitiesRL citiesRL = new CitiesRL(roguelike);
-        roguelike.start(citiesRL);
-    }
-
     @Override
     public void draw(final Backbuffer console) {
         gameBorder.draw(console);
-        console.put("[x]", roguelike.getSize().getWidth() - 4, 0);
+        Color quitXColor = Color.BLACK;
+        if (highlightQuitX) {
+            quitXColor = Color.RED;
+        }
+        console.put("[x]", roguelike.getSize().getWidth() - 4, 0, Color.WHITE, quitXColor);
 
         terrain.draw(console);
     }
@@ -60,12 +59,21 @@ public class CitiesRL implements Game {
 
     @Override
     public void handle(final Event event) {
+        final int quitXColumn = roguelike.getSize().getWidth() - 3;
+        final int quitXRow = 0;
+
+        event.as(MouseMoveEvent.class) //
+                        .ifPresent(mouseMoveEvent -> {
+                            highlightQuitX = mouseMoveEvent.getColumn() == quitXColumn
+                                            && mouseMoveEvent.getRow() == quitXRow;
+                        });
+
         event.as(MouseButtonEvent.class) //
                         .ifPresent(mouseButtonEvent -> {
                             if (mouseButtonEvent.isPressed() && //
                             mouseButtonEvent.getButton() == MouseButtonEvent.Button.LEFT && //
-                            mouseButtonEvent.getColumn() == roguelike.getSize().getWidth() - 3 && //
-                            mouseButtonEvent.getRow() == 0) {
+                            mouseButtonEvent.getColumn() == quitXColumn && //
+                            mouseButtonEvent.getRow() == quitXRow) {
                                 roguelike.stop();
                             }
                         });

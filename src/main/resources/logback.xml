@@ -22,7 +22,6 @@
         </encoder>
     </appender>
 
-    <logger name="com.rl4j" level="debug"/>
     <logger name="com.citiesrl" level="debug"/>
 
     <root level="error">

@@ -21,6 +21,7 @@ public class Main {
 
     public static void main(final String[] args) {
         final Roguelike roguelike = Roguelike.builder() //
+                        .title("Cities RL") //
                         .borderless(true) //
                         .fpsLimit(30) //
                         .build();
