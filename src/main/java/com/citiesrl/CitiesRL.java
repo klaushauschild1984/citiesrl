@@ -15,6 +15,7 @@
 package com.citiesrl;
 
 import java.awt.Color;
+
 import com.rl4j.Backbuffer;
 import com.rl4j.Dimension;
 import com.rl4j.Game;
@@ -29,6 +30,7 @@ public class CitiesRL implements Game {
     private final Roguelike roguelike;
     private final Box gameBorder;
     private final Terrain terrain;
+    private final Date date;
 
     private boolean highlightQuitX;
 
@@ -38,6 +40,7 @@ public class CitiesRL implements Game {
         gameBorder = new Box(0, 0, size.getWidth(), size.getHeight());
         gameBorder.setTitle("Cities RL");
         terrain = new Terrain(size);
+        date = new Date();
     }
 
     @Override
@@ -50,11 +53,13 @@ public class CitiesRL implements Game {
         console.put("[x]", roguelike.getSize().getWidth() - 4, 0, Color.WHITE, quitXColor);
 
         terrain.draw(console);
+        date.draw(console);
     }
 
     @Override
     public void update(final float elapsed) {
         terrain.update(elapsed);
+        date.update(elapsed);
     }
 
     @Override
@@ -78,6 +83,7 @@ public class CitiesRL implements Game {
                             }
                         });
 
+        date.handle(event);
     }
 
 }
