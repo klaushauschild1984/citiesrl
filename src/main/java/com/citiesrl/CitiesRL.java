@@ -15,6 +15,7 @@
 package com.citiesrl;
 
 import java.awt.Color;
+import java.util.Random;
 
 import com.rl4j.Backbuffer;
 import com.rl4j.Dimension;
@@ -34,12 +35,12 @@ public class CitiesRL implements Game {
 
     private boolean highlightQuitX;
 
-    public CitiesRL(final Roguelike roguelike) {
+    public CitiesRL(final Roguelike roguelike, final Random random) {
         this.roguelike = roguelike;
         final Dimension size = roguelike.getSize();
         gameBorder = new Box(0, 0, size.getWidth(), size.getHeight());
         gameBorder.setTitle("Cities RL");
-        terrain = new Terrain(size);
+        terrain = new Terrain(size, random);
         date = new Date();
     }
 

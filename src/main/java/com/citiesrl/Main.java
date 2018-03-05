@@ -15,6 +15,7 @@
 
 package com.citiesrl;
 
+import java.util.Random;
 import com.rl4j.Roguelike;
 
 public class Main {
@@ -25,7 +26,7 @@ public class Main {
                         .borderless(true) //
                         .fpsLimit(30) //
                         .build();
-        final CitiesRL citiesRL = new CitiesRL(roguelike);
+        final CitiesRL citiesRL = new CitiesRL(roguelike, new Random());
         roguelike.start(citiesRL);
     }
 

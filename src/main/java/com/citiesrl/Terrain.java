@@ -15,50 +15,37 @@
 package com.citiesrl;
 
 import java.util.Random;
+
 import com.rl4j.Backbuffer;
 import com.rl4j.Dimension;
 import com.rl4j.Draw;
 import com.rl4j.Update;
+
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 public class Terrain implements Update, Draw {
 
     private final Tile[][] tiles;
+    private final Random random;
 
     private int offsetColumn;
     private int offsetRow;
 
-    public Terrain(final Dimension size) {
+    public Terrain(final Dimension size, final Random random) {
         tiles = new Tile[size.getWidth()][size.getHeight()];
+        this.random = random;
+        final Noise noise = new Noise(random, 1.0f, size.getWidth(), size.getHeight());
         for (int column = 0; column < size.getWidth(); column++) {
             for (int row = 0; row < size.getHeight(); row++) {
-                tiles[column][row] = new Tile(Ground.DIRT);
-            }
-        }
-        final Random random = new Random();
-
-        int x = 0;
-        int y = 0;
-        int dx = 0;
-        int dy = 0;
-        if (random.nextBoolean()) {
-            y = random.nextInt(size.getHeight());
-            dx = 1;
-        } else {
-            x = random.nextInt(size.getWidth());
-            dy = 1;
-        }
-        while (x < size.getWidth() && y < size.getHeight()) {
-            tiles[x][y] = new Tile(Ground.RIVER);
-            x += dx;
-            y += dy;
-            if (random.nextInt(4) == 0) {
-                if (dx == 0) {
-                    x += 1 - random.nextInt(2);
-                }
-                if (dy == 0) {
-                    y += 1 - random.nextInt(2);
+                final float value = noise.get(column, row);
+                if (value < 0.1) {
+                    tiles[column][row] = new Tile(Ground.RIVER);
+                } else {
+                    tiles[column][row] = new Tile(Ground.DIRT);
+                    if (value > 0.8) {
+                        tiles[column][row] = new Tile(Ground.TREE);
+                    }
                 }
             }
         }
@@ -78,7 +65,7 @@ public class Terrain implements Update, Draw {
                         console.put('*', column, row, Palette.TREE, Palette.DIRT);
                         break;
                     case RIVER:
-                        console.put(' ', column, row, null, Palette.RIVER);
+                        console.put(' ', column, row, Palette.WAVE, Palette.RIVER);
                         break;
                 }
 
@@ -97,9 +84,7 @@ public class Terrain implements Update, Draw {
 
         TREE,
 
-        RIVER,
-
-        ;
+        RIVER,;
 
     }
 
@@ -108,6 +93,78 @@ public class Terrain implements Update, Draw {
     class Tile {
 
         private final Ground ground;
+
+    }
+
+    class Noise {
+
+        private final Random random;
+        private final float roughness;
+        private final float[][] data;
+
+        /**
+         * Generate a noise source based upon the midpoint displacement fractal.
+         *
+         * @param random The random number generator
+         * @param roughness a roughness parameter
+         * @param width the width of the grid
+         * @param height the height of the grid
+         */
+        public Noise(final Random random, final float roughness, final int width,
+                        final int height) {
+            this.roughness = roughness / width;
+            data = new float[width][height];
+            this.random = (random == null) ? new Random() : random;
+            initialise();
+        }
+
+        private void initialise() {
+            int xh = data.length - 1;
+            int yh = data[0].length - 1;
+
+            // set the corner points
+            data[0][0] = random.nextFloat();
+            data[0][yh] = random.nextFloat();
+            data[xh][0] = random.nextFloat();
+            data[xh][yh] = random.nextFloat();
+
+            // generate the fractal
+            generate(0, 0, xh, yh);
+        }
+
+        // Add a suitable amount of random displacement to a point
+        private float roughen(float v, int l, int h) {
+            return v + roughness * (float) (random.nextGaussian() * (h - l));
+        }
+
+        // generate the fractal
+        private void generate(int xl, int yl, int xh, int yh) {
+            int xm = (xl + xh) / 2;
+            int ym = (yl + yh) / 2;
+            if ((xl == xm) && (yl == ym))
+                return;
+
+            data[xm][yl] = 0.5f * (data[xl][yl] + data[xh][yl]);
+            data[xm][yh] = 0.5f * (data[xl][yh] + data[xh][yh]);
+            data[xl][ym] = 0.5f * (data[xl][yl] + data[xl][yh]);
+            data[xh][ym] = 0.5f * (data[xh][yl] + data[xh][yh]);
+
+            float v = roughen(0.5f * (data[xm][yl] + data[xm][yh]), xl + yl, yh + xh);
+            data[xm][ym] = v;
+            data[xm][yl] = roughen(data[xm][yl], xl, xh);
+            data[xm][yh] = roughen(data[xm][yh], xl, xh);
+            data[xl][ym] = roughen(data[xl][ym], yl, yh);
+            data[xh][ym] = roughen(data[xh][ym], yl, yh);
+
+            generate(xl, yl, xm, ym);
+            generate(xm, yl, xh, ym);
+            generate(xl, ym, xm, yh);
+            generate(xm, ym, xh, yh);
+        }
+
+        public float get(final int x, final int y) {
+            return data[x][y];
+        }
 
     }
 

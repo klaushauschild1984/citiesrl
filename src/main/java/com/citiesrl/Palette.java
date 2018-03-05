@@ -22,6 +22,8 @@ public interface Palette {
 
     Color RIVER = Color.BLUE;
 
-    Color TREE = Color.GRAY.darker();
+    Color WAVE = Color.BLUE.brighter();
+
+    Color TREE = Color.GREEN.darker();
 
 }
