@@ -98,16 +98,16 @@ public class Terrain implements Update, Draw, Handler {
                 final Tile tile = tiles[offsetColumn + column - 1][offsetRow + row - 1];
                 switch (tile.getGround()) {
                     case DIRT:
-                        console.put(tile.isDecoration() ? '.' : ' ', column, row, Palette.ROCK,
-                                        Palette.DIRT);
+                        final char dirt = tile.isDecoration() ? '.' : ' ';
+                        console.put(dirt, column, row, Palette.ROCK, Palette.DIRT);
                         break;
                     case TREE:
-                        console.put(tile.isDecoration() ? '.' : '*', column, row, Palette.TREE,
-                                        Palette.DIRT);
+                        final char tree = tile.isDecoration() ? '.' : '*';
+                        console.put(tree, column, row, Palette.TREE, Palette.DIRT);
                         break;
                     case RIVER:
-                        console.put(tile.isDecoration() ? '~' : ' ', column, row, Palette.WAVE,
-                                        Palette.RIVER);
+                        final char river = tile.isDecoration() ? '~' : ' ';
+                        console.put(river, column, row, Palette.WAVE, Palette.RIVER);
                         break;
                 }
 
