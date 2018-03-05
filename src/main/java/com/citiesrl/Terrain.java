@@ -20,39 +20,74 @@ import com.rl4j.Backbuffer;
 import com.rl4j.Dimension;
 import com.rl4j.Draw;
 import com.rl4j.Update;
+import com.rl4j.event.Event;
+import com.rl4j.event.Handler;
+import com.rl4j.event.KeyboardEvent;
+import com.rl4j.event.KeyboardEvent.Key;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 
-public class Terrain implements Update, Draw {
+@Slf4j
+public class Terrain implements Update, Draw, Handler {
+
+    private static final float RIVER_RATIO_THRESHOLD = 1 / 3f;
 
     private final Tile[][] tiles;
     private final Random random;
+    private final int offsetMaxColumn;
+    private final int offsetMaxRow;
 
     private int offsetColumn;
     private int offsetRow;
+    private int moveIncrement = 3;
 
     private float time;
 
-    public Terrain(final Dimension size, final Random random) {
+    public Terrain(final Dimension size, final Dimension consoleSize, final Random random) {
         tiles = new Tile[size.getWidth()][size.getHeight()];
+        offsetMaxColumn = size.getWidth() - (consoleSize.getWidth() - 2);
+        offsetMaxRow = size.getHeight() - (consoleSize.getHeight() - 2);
         this.random = random;
-        final Noise noise = new Noise(random, 1.0f, size.getWidth(), size.getHeight());
-        for (int column = 0; column < size.getWidth(); column++) {
-            for (int row = 0; row < size.getHeight(); row++) {
-                final float value = noise.get(column, row);
-                if (value < 0.1) {
-                    tiles[column][row] = new Tile(Ground.RIVER);
-                } else {
-                    tiles[column][row] = new Tile(Ground.DIRT);
-                    tiles[column][row].setDecoration(random.nextFloat() < 0.2f);
-                    if (value > 0.8) {
-                        tiles[column][row] = new Tile(Ground.TREE);
+        boolean first = true;
+        do {
+            if (!first) {
+                log.debug("River ratio ({}) is above  threshold ({}). Try again.", getRiverRatio(),
+                                RIVER_RATIO_THRESHOLD);
+            }
+            final Noise noise = new Noise(random, 1.0f, size.getWidth(), size.getHeight());
+            for (int column = 0; column < size.getWidth(); column++) {
+                for (int row = 0; row < size.getHeight(); row++) {
+                    final float value = noise.get(column, row);
+                    if (value < 0.1) {
+                        tiles[column][row] = new Tile(Ground.RIVER);
+                    } else {
+                        tiles[column][row] = new Tile(Ground.DIRT);
+                        if (value > 0.8) {
+                            tiles[column][row] = new Tile(Ground.TREE);
+                        }
+                        tiles[column][row].setDecoration(random.nextFloat() < 0.2f);
                     }
                 }
             }
+            first = false;
+        } while (getRiverRatio() > RIVER_RATIO_THRESHOLD);
+    }
+
+    private float getRiverRatio() {
+        int riverCount = 0;
+        for (int column = 0; column < tiles.length - 1; column++) {
+            for (int row = 0; row < tiles[column].length - 1; row++) {
+                final Tile tile = tiles[column][row];
+                if (tile.getGround() == Ground.RIVER) {
+                    riverCount++;
+                }
+            }
         }
+        final int tileCount = tiles.length * tiles[0].length;
+        return riverCount / (float) tileCount;
     }
 
     @Override
@@ -60,14 +95,15 @@ public class Terrain implements Update, Draw {
         final Dimension consoleSize = console.getSize();
         for (int column = 1; column < consoleSize.getWidth() - 1; column++) {
             for (int row = 1; row < consoleSize.getHeight() - 1; row++) {
-                final Tile tile = tiles[column][row];
+                final Tile tile = tiles[offsetColumn + column - 1][offsetRow + row - 1];
                 switch (tile.getGround()) {
                     case DIRT:
                         console.put(tile.isDecoration() ? '.' : ' ', column, row, Palette.ROCK,
                                         Palette.DIRT);
                         break;
                     case TREE:
-                        console.put('*', column, row, Palette.TREE, Palette.DIRT);
+                        console.put(tile.isDecoration() ? '.' : '*', column, row, Palette.TREE,
+                                        Palette.DIRT);
                         break;
                     case RIVER:
                         console.put(tile.isDecoration() ? '~' : ' ', column, row, Palette.WAVE,
@@ -84,8 +120,8 @@ public class Terrain implements Update, Draw {
         time += elapsed;
         if (time > 0.5f) {
             time = 0;
-            for (int column = 1; column < tiles.length - 1; column++) {
-                for (int row = 1; row < tiles[column].length - 1; row++) {
+            for (int column = 0; column < tiles.length - 1; column++) {
+                for (int row = 0; row < tiles[column].length - 1; row++) {
                     final Tile tile = tiles[column][row];
                     if (tile.getGround() != Ground.RIVER) {
                         continue;
@@ -94,6 +130,49 @@ public class Terrain implements Update, Draw {
                 }
             }
         }
+    }
+
+    @Override
+    public void handle(final Event event) {
+        event.as(KeyboardEvent.class) //
+                        .ifPresent(keyboardEvent -> {
+                            if (keyboardEvent.getKey() == Key.CRTL) {
+                                moveIncrement = keyboardEvent.isPressed() ? 9 : 3;
+                            }
+                            if (!keyboardEvent.isPressed()) {
+                                return;
+                            }
+                            switch (keyboardEvent.getKey()) {
+                                case A:
+                                case LEFT:
+                                    offsetColumn -= moveIncrement;
+                                    if (offsetColumn < 0) {
+                                        offsetColumn = 0;
+                                    }
+                                    break;
+                                case W:
+                                case UP:
+                                    offsetRow -= moveIncrement;
+                                    if (offsetRow < 0) {
+                                        offsetRow = 0;
+                                    }
+                                    break;
+                                case D:
+                                case RIGHT:
+                                    offsetColumn += moveIncrement;
+                                    if (offsetColumn > offsetMaxColumn) {
+                                        offsetColumn = offsetMaxColumn;
+                                    }
+                                    break;
+                                case S:
+                                case DOWN:
+                                    offsetRow += moveIncrement;
+                                    if (offsetRow > offsetMaxRow) {
+                                        offsetRow = offsetMaxRow;
+                                    }
+                                    break;
+                            }
+                        });
     }
 
     enum Ground {

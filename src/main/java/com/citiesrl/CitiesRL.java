@@ -26,21 +26,35 @@ import com.rl4j.event.MouseEvent.MouseButtonEvent;
 import com.rl4j.event.MouseEvent.MouseMoveEvent;
 import com.rl4j.ui.Box;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 public class CitiesRL implements Game {
 
     private final Roguelike roguelike;
+    private final Random random;
     private final Box gameBorder;
     private final Terrain terrain;
     private final Date date;
 
     private boolean highlightQuitX;
 
-    public CitiesRL(final Roguelike roguelike, final Random random) {
+    public CitiesRL(final Roguelike roguelike, final Long randomSeed) {
         this.roguelike = roguelike;
+        if (randomSeed == null) {
+            final long currentTimeMillis = System.currentTimeMillis();
+            log.info("Random seed: {}", currentTimeMillis);
+            random = new Random(currentTimeMillis);
+        } else {
+            log.info("Given seed: {}", randomSeed);
+            random = new Random(randomSeed);
+        }
         final Dimension size = roguelike.getSize();
         gameBorder = new Box(0, 0, size.getWidth(), size.getHeight());
         gameBorder.setTitle("Cities RL");
-        terrain = new Terrain(size, random);
+        final Dimension terrainSize = new Dimension((int) (size.getWidth() * 1.5),
+                        (int) (size.getHeight() * 1.5));
+        terrain = new Terrain(terrainSize, size, random);
         date = new Date();
     }
 
@@ -85,6 +99,7 @@ public class CitiesRL implements Game {
                         });
 
         date.handle(event);
+        terrain.handle(event);
     }
 
 }
