@@ -116,24 +116,12 @@ public class Terrain implements Update, Draw, Handler {
     }
 
     @Override
-    public void update(final float elapsed) {
-        time += elapsed;
-        if (time > 0.5f) {
-            time = 0;
-            for (int column = 0; column < tiles.length - 1; column++) {
-                for (int row = 0; row < tiles[column].length - 1; row++) {
-                    final Tile tile = tiles[column][row];
-                    if (tile.getGround() != Ground.RIVER) {
-                        continue;
-                    }
-                    tile.setDecoration(random.nextFloat() < 0.25);
-                }
-            }
-        }
-    }
+    public void update(final float elapsed) {}
 
     @Override
     public void handle(final Event event) {
+        event.as(Clock.Tick.class) //
+                        .ifPresent(tick -> redecorate());
         event.as(KeyboardEvent.class) //
                         .ifPresent(keyboardEvent -> {
                             if (keyboardEvent.getKey() == Key.CRTL) {
@@ -173,6 +161,18 @@ public class Terrain implements Update, Draw, Handler {
                                     break;
                             }
                         });
+    }
+
+    private void redecorate() {
+        for (int column = 0; column < tiles.length - 1; column++) {
+            for (int row = 0; row < tiles[column].length - 1; row++) {
+                final Tile tile = tiles[column][row];
+                if (tile.getGround() != Ground.RIVER) {
+                    continue;
+                }
+                tile.setDecoration(random.nextFloat() < 0.25);
+            }
+        }
     }
 
     enum Ground {
