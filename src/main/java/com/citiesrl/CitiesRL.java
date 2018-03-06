@@ -35,7 +35,7 @@ public class CitiesRL implements Game {
     private final Random random;
     private final Box gameBorder;
     private final Terrain terrain;
-    private final Date date;
+    private final Clock clock;
 
     private boolean highlightQuitX;
 
@@ -55,7 +55,7 @@ public class CitiesRL implements Game {
         final Dimension terrainSize = new Dimension((int) (size.getWidth() * 1.5),
                         (int) (size.getHeight() * 1.5));
         terrain = new Terrain(terrainSize, size, random);
-        date = new Date();
+        clock = new Clock();
     }
 
     @Override
@@ -68,13 +68,13 @@ public class CitiesRL implements Game {
         console.put("[x]", roguelike.getSize().getWidth() - 4, 0, Color.WHITE, quitXColor);
 
         terrain.draw(console);
-        date.draw(console);
+        clock.draw(console);
     }
 
     @Override
     public void update(final float elapsed) {
         terrain.update(elapsed);
-        date.update(elapsed);
+        clock.update(elapsed);
     }
 
     @Override
@@ -98,7 +98,7 @@ public class CitiesRL implements Game {
                             }
                         });
 
-        date.handle(event);
+        clock.handle(event);
         terrain.handle(event);
     }
 
