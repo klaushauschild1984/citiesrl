@@ -15,12 +15,11 @@
 package com.citiesrl;
 
 import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
-import com.rl4j.Backbuffer;
+import com.rl4j.BackBuffer;
 import com.rl4j.Draw;
 import com.rl4j.Update;
 import com.rl4j.event.Event;
@@ -33,7 +32,7 @@ import lombok.RequiredArgsConstructor;
 
 public class Clock implements Update, Draw, Handler {
 
-    private final DateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
+    private final DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.MEDIUM);
     private final Calendar calendar = GregorianCalendar.getInstance();
 
     private Date date;
@@ -47,7 +46,7 @@ public class Clock implements Update, Draw, Handler {
     }
 
     @Override
-    public void draw(final Backbuffer console) {
+    public void draw(final BackBuffer console) {
         final String dateString =
                         String.format("%s %s", dateFormat.format(date), speed.getSymbol());
         console.put(dateString, 1, console.getSize().getHeight() - 1);
@@ -92,9 +91,9 @@ public class Clock implements Update, Draw, Handler {
 
         PAUSE(".", 0),
 
-        NORMAL(">", 5),
+        NORMAL(">", 2),
 
-        FAST("»", 0.5f),
+        FAST("»", 0.25f),
 
         ;
 

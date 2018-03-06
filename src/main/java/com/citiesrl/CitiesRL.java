@@ -17,7 +17,7 @@ package com.citiesrl;
 import java.awt.Color;
 import java.util.Random;
 
-import com.rl4j.Backbuffer;
+import com.rl4j.BackBuffer;
 import com.rl4j.Dimension;
 import com.rl4j.Game;
 import com.rl4j.Roguelike;
@@ -56,10 +56,11 @@ public class CitiesRL implements Game {
                         (int) (size.getHeight() * 1.5));
         terrain = new Terrain(terrainSize, size, random);
         clock = new Clock();
+        roguelike.getCursor().setBlinkInterval(0);
     }
 
     @Override
-    public void draw(final Backbuffer console) {
+    public void draw(final BackBuffer console) {
         gameBorder.draw(console);
         Color quitXColor = Color.BLACK;
         if (highlightQuitX) {

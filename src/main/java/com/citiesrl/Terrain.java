@@ -16,7 +16,7 @@ package com.citiesrl;
 
 import java.util.Random;
 
-import com.rl4j.Backbuffer;
+import com.rl4j.BackBuffer;
 import com.rl4j.Dimension;
 import com.rl4j.Draw;
 import com.rl4j.Update;
@@ -91,7 +91,7 @@ public class Terrain implements Update, Draw, Handler {
     }
 
     @Override
-    public void draw(final Backbuffer console) {
+    public void draw(final BackBuffer console) {
         final Dimension consoleSize = console.getSize();
         for (int column = 1; column < consoleSize.getWidth() - 1; column++) {
             for (int row = 1; row < consoleSize.getHeight() - 1; row++) {

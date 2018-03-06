@@ -25,6 +25,7 @@ public class Main {
                         .borderless(true) //
                         .fpsLimit(30) //
                         .size(new Dimension(40, 30)) //
+                        .nativeCursor(true) //
                         .build();
         final CitiesRL citiesRL = new CitiesRL(roguelike, null);
         roguelike.start(citiesRL);
