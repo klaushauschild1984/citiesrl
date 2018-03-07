@@ -12,7 +12,7 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-package com.citiesrl;
+package com.citiesrl.simulation;
 
 import java.text.DateFormat;
 import java.util.Calendar;
@@ -103,7 +103,7 @@ public class Clock implements Update, Draw, Handler {
 
     }
 
-    static class Tick implements Event {
+    public static class Tick implements Event {
     }
 
 }

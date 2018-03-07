@@ -17,6 +17,8 @@ package com.citiesrl;
 import java.awt.Color;
 import java.util.Random;
 
+import com.citiesrl.simulation.Clock;
+import com.citiesrl.terrain.Terrain;
 import com.rl4j.BackBuffer;
 import com.rl4j.Dimension;
 import com.rl4j.Game;
