@@ -18,14 +18,32 @@ import java.awt.Color;
 
 public interface Palette {
 
-    Color DIRT = new Color(170, 85, 0);
+    interface Terrain {
 
-    Color ROCK = new Color(200, 115, 30);
+        Color DIRT = new Color(170, 85, 0);
 
-    Color RIVER = new Color(0, 0, 255);
+        Color ROCK = new Color(200, 115, 30);
 
-    Color WAVE = new Color(0, 0, 200);
+        Color RIVER = new Color(0, 0, 255);
 
-    Color TREE = new Color(0, 200, 0);
+        Color WAVE = new Color(0, 0, 200);
+
+        Color TREE = new Color(0, 200, 0);
+
+    }
+
+    interface Entity {
+
+        interface Zone {
+
+            Color RESIDENTIAL = new Color(0, 255, 0);
+
+            Color COMMERCIAL = new Color(200, 0, 255);
+
+            Color INDUSTRIAL = new Color(255, 255, 0);
+
+        }
+
+    }
 
 }
