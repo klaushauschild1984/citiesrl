@@ -14,12 +14,19 @@
 
 package com.citiesrl;
 
+import org.kohsuke.args4j.CmdLineException;
+import org.kohsuke.args4j.CmdLineParser;
+import org.kohsuke.args4j.Option;
 import com.rl4j.Dimension;
 import com.rl4j.Roguelike;
 
 public class Main {
 
-    public static void main(final String[] args) {
+    public static void main(final String[] args) throws CmdLineException {
+        final Arguments arguments = new Arguments();
+        final CmdLineParser cmdLineParser = new CmdLineParser(arguments);
+        cmdLineParser.parseArgument(args);
+
         final Roguelike roguelike = Roguelike.builder() //
                         .title("Cities RL") //
                         .borderless(true) //
@@ -27,8 +34,15 @@ public class Main {
                         .size(new Dimension(40, 30)) //
                         .nativeCursor(true) //
                         .build();
-        final CitiesRL citiesRL = new CitiesRL(roguelike, null);
+        final CitiesRL citiesRL = new CitiesRL(roguelike, arguments.randomSeed);
         roguelike.start(citiesRL);
+    }
+
+    static class Arguments {
+
+        @Option(name = "-randomSeed")
+        Long randomSeed;
+
     }
 
 }
