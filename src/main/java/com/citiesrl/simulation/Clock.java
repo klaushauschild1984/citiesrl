@@ -72,7 +72,15 @@ public class Clock implements Update, Draw, Handler {
                                 return;
                             }
                             switch (keyboardEvent.getKey()) {
-                                // TODO handle faster, slower
+                                case NUM_PLUS:
+                                    speed = speed.faster();
+                                    break;
+                                case NUM_MINUS:
+                                    speed = speed.slower();
+                                    if (speed == Speed.PAUSE) {
+                                        oldSpeed = Speed.PAUSE;
+                                    }
+                                    break;
                                 case SPACE:
                                     if (speed != Speed.PAUSE) {
                                         oldSpeed = speed;
@@ -101,9 +109,34 @@ public class Clock implements Update, Draw, Handler {
         private final String symbol;
         private final float seconds;
 
-    }
+        Speed faster() {
+            switch (this) {
+                case PAUSE:
+                    return NORMAL;
+                case NORMAL:
+                    return FAST;
+                case FAST:
+                    return FAST;
+                default:
+                    throw new IllegalStateException();
 
-    public static class Tick implements Event {
+            }
+        }
+
+        Speed slower() {
+            switch (this) {
+                case PAUSE:
+                    return PAUSE;
+                case NORMAL:
+                    return PAUSE;
+                case FAST:
+                    return NORMAL;
+                default:
+                    throw new IllegalStateException();
+
+            }
+        }
+
     }
 
 }
