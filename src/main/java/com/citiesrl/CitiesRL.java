@@ -17,7 +17,8 @@ package com.citiesrl;
 import java.awt.Color;
 import java.util.Random;
 
-import com.citiesrl.simulation.Clock;
+import com.citiesrl.simulation.City;
+import com.citiesrl.simulation.Zone;
 import com.citiesrl.terrain.Terrain;
 import com.rl4j.BackBuffer;
 import com.rl4j.Dimension;
@@ -37,7 +38,7 @@ public class CitiesRL implements Game {
     private final Random random;
     private final Box gameBorder;
     private final Terrain terrain;
-    private final Clock clock;
+    private final City city;
 
     private boolean highlightQuitX;
 
@@ -57,7 +58,8 @@ public class CitiesRL implements Game {
         final Dimension terrainSize = new Dimension((int) (size.getWidth() * 1.5),
                         (int) (size.getHeight() * 1.5));
         terrain = new Terrain(terrainSize, size, random);
-        clock = new Clock();
+        city = new City(terrain);
+        city.add(new Zone(Zone.Type.RESIDENTIAL, 10, 10));
         roguelike.getCursor().setBlinkInterval(0);
     }
 
@@ -71,13 +73,13 @@ public class CitiesRL implements Game {
         console.put("[x]", roguelike.getSize().getWidth() - 4, 0, Color.WHITE, quitXColor);
 
         terrain.draw(console);
-        clock.draw(console);
+        city.draw(console);
     }
 
     @Override
     public void update(final float elapsed) {
+        city.update(elapsed);
         terrain.update(elapsed);
-        clock.update(elapsed);
     }
 
     @Override
@@ -101,7 +103,7 @@ public class CitiesRL implements Game {
                             }
                         });
 
-        clock.handle(event);
+        city.handle(event);
         terrain.handle(event);
     }
 

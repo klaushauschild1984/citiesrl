@@ -17,7 +17,7 @@ package com.citiesrl.terrain;
 import java.util.Random;
 
 import com.citiesrl.Palette;
-import com.citiesrl.simulation.Clock.Tick;
+import com.citiesrl.simulation.Tick;
 import com.rl4j.BackBuffer;
 import com.rl4j.Dimension;
 import com.rl4j.Draw;
@@ -27,6 +27,7 @@ import com.rl4j.event.Handler;
 import com.rl4j.event.KeyboardEvent;
 import com.rl4j.event.KeyboardEvent.Key;
 
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -39,7 +40,9 @@ public class Terrain implements Update, Draw, Handler {
     private final int offsetMaxColumn;
     private final int offsetMaxRow;
 
+    @Getter
     private int offsetColumn;
+    @Getter
     private int offsetRow;
     private int moveIncrement = 3;
 
@@ -98,15 +101,16 @@ public class Terrain implements Update, Draw, Handler {
                 switch (tile.getGround()) {
                     case DIRT:
                         final char dirt = tile.isDecoration() ? '.' : ' ';
-                        console.put(dirt, column, row, Palette.ROCK, Palette.DIRT);
+                        console.put(dirt, column, row, Palette.Terrain.ROCK, Palette.Terrain.DIRT);
                         break;
                     case TREE:
                         final char tree = tile.isDecoration() ? '.' : '*';
-                        console.put(tree, column, row, Palette.TREE, Palette.DIRT);
+                        console.put(tree, column, row, Palette.Terrain.TREE, Palette.Terrain.DIRT);
                         break;
                     case RIVER:
                         final char river = tile.isDecoration() ? '~' : ' ';
-                        console.put(river, column, row, Palette.WAVE, Palette.RIVER);
+                        console.put(river, column, row, Palette.Terrain.WAVE,
+                                        Palette.Terrain.RIVER);
                         break;
                 }
 
