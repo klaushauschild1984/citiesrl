@@ -15,7 +15,9 @@
 package com.citiesrl.simulation;
 
 import java.awt.Color;
+import java.util.AbstractMap.SimpleEntry;
 import java.util.HashSet;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import com.citiesrl.terrain.Terrain;
@@ -27,6 +29,7 @@ import com.rl4j.event.Event;
 import com.rl4j.event.Handler;
 import com.rl4j.event.KeyboardEvent;
 import com.rl4j.event.KeyboardEvent.Key;
+
 import lombok.Getter;
 
 public class City implements Update, Draw, Handler {
@@ -119,10 +122,55 @@ public class City implements Update, Draw, Handler {
 
     private void updatePower(final Entity entity) {
         final boolean power = entity instanceof PowerPlant;
+        final Set<Entry<Integer, Integer>> stack = new HashSet<>();
         for (int column = 0; column < entity.getSize().getWidth(); column++) {
             for (int row = 0; row < entity.getSize().getHeight(); row++) {
-                powerMap[column + entity.getLeft()][row + entity.getTop()] = power;
+                final int entityColumn = column + entity.getLeft();
+                final int entityRow = row + entity.getTop();
+                powerMap[entityColumn][entityRow] = power;
+                if (power) {
+                    stack.add(new SimpleEntry<>(entityColumn, entityRow));
+                }
             }
+        }
+        while (!stack.isEmpty()) {
+            final Entry<Integer, Integer> coordinates = stack.iterator().next();
+            stack.remove(coordinates);
+            checkPower(coordinates.getKey() - 1, coordinates.getValue(), stack);
+            checkPower(coordinates.getKey() + 1, coordinates.getValue(), stack);
+            checkPower(coordinates.getKey(), coordinates.getValue() - 1, stack);
+            checkPower(coordinates.getKey(), coordinates.getValue() + 1, stack);
+        }
+        entities.stream() //
+                        .filter(e -> e instanceof PowerConsumer) //
+                        .map(powerConsumerEntity -> (PowerConsumer) powerConsumerEntity) //
+                        .forEach(powerConsumer -> {
+                            final Boolean powerConsumerPower =
+                                            powerMap[powerConsumer.getLeft()][powerConsumer
+                                                            .getTop()];
+                            if (powerConsumerPower != null && powerConsumerPower) {
+                                powerConsumer.setPowered(true);
+                            }
+                        });
+    }
+
+    private void checkPower(final int column, final int row,
+                    final Set<Entry<Integer, Integer>> stack) {
+        try {
+            final Boolean power = powerMap[column][row];
+            if (power == null) {
+                return;
+            }
+            if (power) {
+                return;
+            }
+            powerMap[column][row] = true;
+            stack.add(new SimpleEntry<>(column + 1, row));
+            stack.add(new SimpleEntry<>(column - 1, row));
+            stack.add(new SimpleEntry<>(column, row + 1));
+            stack.add(new SimpleEntry<>(column, row - 1));
+        } catch (final ArrayIndexOutOfBoundsException exception) {
+            // swallow
         }
     }
 
