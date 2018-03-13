@@ -16,10 +16,12 @@ package com.citiesrl.simulation;
 
 import com.citiesrl.terrain.Terrain;
 import com.rl4j.BackBuffer;
+import com.rl4j.Dimension;
 import com.rl4j.Draw;
 import com.rl4j.Update;
 import com.rl4j.event.Event;
 import com.rl4j.event.Handler;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
@@ -28,9 +30,14 @@ import lombok.ToString;
 @ToString
 public abstract class Entity implements Update, Draw, Handler {
 
+    @Getter
     private final String name;
-    private final int top;
+    @Getter
     private final int left;
+    @Getter
+    private final int top;
+    @Getter
+    private final Dimension size;
 
     @Setter
     private City city;
