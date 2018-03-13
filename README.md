@@ -8,9 +8,19 @@ I try to re-interpret the old SimCity classic. There is no connection to its ope
 [Micropolis](https://github.com/SimHacker/micropolis). But from time to time I will spy.
 
 # Controls
-* arrow keys, WASD
+* arrow keys or WASD
   * move the terrain by three tiles
-* CRTL + arrow keys, WASD
+* CRTL + arrow keys or WASD
   * move the terrain by nine tiles
+* space
+  * pause simulation
+* \+
+  * speed up simulation
+* \-
+  * slow down simulation
 * P
   * toggle power map
+
+# Features
+* random generated terrain
+* power plant will power consuming entities via direct neighbouring or through roads
