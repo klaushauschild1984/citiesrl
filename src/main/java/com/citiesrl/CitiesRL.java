@@ -18,11 +18,12 @@ import java.awt.Color;
 import java.util.Random;
 
 import com.citiesrl.simulation.City;
+import com.citiesrl.simulation.PowerPlant;
 import com.citiesrl.simulation.Zone;
 import com.citiesrl.terrain.Terrain;
 import com.rl4j.BackBuffer;
 import com.rl4j.Dimension;
-import com.rl4j.Game;
+import com.rl4j.GameObject;
 import com.rl4j.Roguelike;
 import com.rl4j.event.Event;
 import com.rl4j.event.MouseEvent.MouseButtonEvent;
@@ -32,7 +33,7 @@ import com.rl4j.ui.Box;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class CitiesRL implements Game {
+public class CitiesRL implements GameObject {
 
     private final Roguelike roguelike;
     private final Random random;
@@ -59,7 +60,8 @@ public class CitiesRL implements Game {
                         (int) (size.getHeight() * 1.5));
         terrain = new Terrain(terrainSize, size, random);
         city = new City(terrain);
-        city.add(new Zone(Zone.Type.RESIDENTIAL, 10, 10));
+        city.add(new Zone(Zone.Type.RESIDENTIAL, 9, 3));
+        city.add(new PowerPlant(12, 3));
         roguelike.getCursor().setBlinkInterval(0);
     }
 
