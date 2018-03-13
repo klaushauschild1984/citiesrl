@@ -18,11 +18,12 @@
 
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
-            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %class{1}:%line - %msg%n</pattern>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %class{1}.%method:%line - %msg%n</pattern>
         </encoder>
     </appender>
 
     <logger name="com.citiesrl" level="debug"/>
+    <logger name="com.rl4j.Console" level="debug"/>
 
     <root level="error">
         <appender-ref ref="STDOUT"/>

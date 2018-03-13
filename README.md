@@ -1,4 +1,16 @@
 # Cities RL
-SimCity like simulation as roguelike using my custom engine [Roguelikes for Java](https://github.com/klaushauschild1984/rl4j).
+SimCity like simulation as roguelike using my custom engine
+[Roguelikes for Java](https://github.com/klaushauschild1984/rl4j).
 
 ![Cities RL](screenshot.png?raw=true "Cities RL")
+
+I try to re-interpret the old SimCity classic. There is no connection to its open sources and various ports at
+[Micropolis](https://github.com/SimHacker/micropolis). But from time to time I will spy.
+
+# Controls
+* arrow keys, WASD
+  * move the terrain by three tiles
+* CRTL + arrow keys, WASD
+  * move the terrain by nine tiles
+* P
+  * toggle power map
