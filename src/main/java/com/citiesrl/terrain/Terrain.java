@@ -78,6 +78,10 @@ public class Terrain implements Update, Draw, Handler {
         } while (getRiverRatio() > RIVER_RATIO_THRESHOLD);
     }
 
+    public Dimension getSize() {
+        return new Dimension(tiles.length, tiles[0].length);
+    }
+
     private float getRiverRatio() {
         int riverCount = 0;
         for (int column = 0; column < tiles.length - 1; column++) {
