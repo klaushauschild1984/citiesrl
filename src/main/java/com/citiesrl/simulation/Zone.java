@@ -15,17 +15,22 @@
 package com.citiesrl.simulation;
 
 import java.awt.Color;
+
 import com.citiesrl.Palette;
 import com.rl4j.BackBuffer;
+import com.rl4j.Dimension;
+import com.rl4j.event.Event;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
-public class Zone extends Entity {
+public class Zone extends PowerConsumer {
 
     private final Type type;
 
-    public Zone(final Type type, final int top, final int left) {
-        super(type.name(), top, left);
+    private boolean powerBlink;
+
+    public Zone(final Type type, final int left, final int top) {
+        super(type.name(), left, top, new Dimension(3, 3));
         this.type = type;
     }
 
@@ -35,6 +40,18 @@ public class Zone extends Entity {
         console.put(String.format("│%s│", type.getC()), column, row + 1, type.getColor(),
                         Palette.Terrain.DIRT);
         console.put("└─┘", column, row + 2, type.getColor(), Palette.Terrain.DIRT);
+
+        if (!isPowered() && powerBlink) {
+            console.put('Z', column + 1, row + 1, Color.BLACK, Color.YELLOW);
+        }
+    }
+
+    @Override
+    public void handle(final Event event) {
+        event.as(Tick.class) //
+                        .ifPresent(tick -> {
+                            powerBlink = !powerBlink;
+                        });
     }
 
     @RequiredArgsConstructor
