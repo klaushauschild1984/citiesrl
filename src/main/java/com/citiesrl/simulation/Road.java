@@ -14,24 +14,19 @@
 
 package com.citiesrl.simulation;
 
-import java.awt.Color;
-
 import com.citiesrl.Palette;
 import com.rl4j.BackBuffer;
 import com.rl4j.Dimension;
 
-public class PowerPlant extends Entity {
+public class Road extends Entity {
 
-    public PowerPlant(final int left, final int top) {
-        super("Power plant", left, top, new Dimension(3, 4));
+    public Road(final int left, final int top) {
+        super("Road", left, top, new Dimension(1, 1));
     }
 
     @Override
     protected void draw(final BackBuffer console, final int column, final int row) {
-        console.put("###", column, row, Color.YELLOW, Palette.Terrain.DIRT);
-        console.put("#/#", column, row + 1, Color.YELLOW, Palette.Terrain.DIRT);
-        console.put("#/#", column, row + 2, Color.YELLOW, Palette.Terrain.DIRT);
-        console.put("###", column, row + 3, Color.YELLOW, Palette.Terrain.DIRT);
+        console.put('-', column, row, Palette.Entity.Road.MARKS, Palette.Entity.Road.ASPHALT);
     }
 
 }
