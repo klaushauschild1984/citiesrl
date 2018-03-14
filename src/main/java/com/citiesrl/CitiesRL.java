@@ -19,6 +19,7 @@ import java.util.Random;
 
 import com.citiesrl.simulation.City;
 import com.citiesrl.simulation.PowerPlant;
+import com.citiesrl.simulation.Road;
 import com.citiesrl.simulation.Zone;
 import com.citiesrl.terrain.Terrain;
 import com.rl4j.BackBuffer;
@@ -60,8 +61,15 @@ public class CitiesRL implements GameObject {
                         (int) (size.getHeight() * 1.5));
         terrain = new Terrain(terrainSize, size, random);
         city = new City(terrain);
-        city.add(new Zone(Zone.Type.RESIDENTIAL, 9, 3));
-        city.add(new PowerPlant(12, 3));
+        city.add(new Zone(Zone.Type.RESIDENTIAL, 9, 4));
+        city.add(new PowerPlant(13, 3));
+        city.add(new Road(15, 7));
+        city.add(new Road(14, 7));
+        city.add(new Road(13, 7));
+        city.add(new Road(12, 7));
+        city.add(new Road(11, 7));
+        city.add(new Road(10, 7));
+        city.add(new Road(9, 7));
         roguelike.getCursor().setBlinkInterval(0);
     }
 

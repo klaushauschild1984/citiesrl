@@ -121,25 +121,31 @@ public class City implements Update, Draw, Handler {
     }
 
     private void updatePower(final Entity entity) {
-        final boolean power = entity instanceof PowerPlant;
-        final Set<Entry<Integer, Integer>> stack = new HashSet<>();
         for (int column = 0; column < entity.getSize().getWidth(); column++) {
             for (int row = 0; row < entity.getSize().getHeight(); row++) {
                 final int entityColumn = column + entity.getLeft();
                 final int entityRow = row + entity.getTop();
-                powerMap[entityColumn][entityRow] = power;
-                if (power) {
-                    stack.add(new SimpleEntry<>(entityColumn, entityRow));
+                powerMap[entityColumn][entityRow] = entity instanceof PowerPlant;
+            }
+        }
+
+        final Set<Entry<Integer, Integer>> stack = new HashSet<>();
+        for (int column = 0; column < terrain.getSize().getWidth(); column++) {
+            for (int row = 0; row < terrain.getSize().getHeight(); row++) {
+                final Boolean power = powerMap[column][row];
+                if (power != null && power) {
+                    stack.add(new SimpleEntry<>(column, row));
                 }
             }
         }
+
         while (!stack.isEmpty()) {
             final Entry<Integer, Integer> coordinates = stack.iterator().next();
-            stack.remove(coordinates);
             checkPower(coordinates.getKey() - 1, coordinates.getValue(), stack);
             checkPower(coordinates.getKey() + 1, coordinates.getValue(), stack);
             checkPower(coordinates.getKey(), coordinates.getValue() - 1, stack);
             checkPower(coordinates.getKey(), coordinates.getValue() + 1, stack);
+            stack.remove(coordinates);
         }
         entities.stream() //
                         .filter(e -> e instanceof PowerConsumer) //
@@ -152,8 +158,25 @@ public class City implements Update, Draw, Handler {
                                 powerConsumer.setPowered(true);
                             }
                         });
+
+        printPowerMap();
     }
 
+    private void printPowerMap() {
+        for (int column = 0; column < terrain.getSize().getWidth(); column++) {
+            for (int row = 0; row < terrain.getSize().getHeight(); row++) {
+                final Boolean power = powerMap[column][row];
+                if (power == null) {
+                    System.out.print(" ");
+                } else {
+                    System.out.print(power ? "1" : "0");
+                }
+            }
+            System.out.println();
+        }
+    }
+
+    // TODO works but un-elegant
     private void checkPower(final int column, final int row,
                     final Set<Entry<Integer, Integer>> stack) {
         try {
@@ -165,10 +188,19 @@ public class City implements Update, Draw, Handler {
                 return;
             }
             powerMap[column][row] = true;
-            stack.add(new SimpleEntry<>(column + 1, row));
-            stack.add(new SimpleEntry<>(column - 1, row));
-            stack.add(new SimpleEntry<>(column, row + 1));
-            stack.add(new SimpleEntry<>(column, row - 1));
+            // TODO will cause problems at the borders
+            if (powerMap[column + 1][row] != null) {
+                stack.add(new SimpleEntry<>(column + 1, row));
+            }
+            if (powerMap[column - 1][row] != null) {
+                stack.add(new SimpleEntry<>(column - 1, row));
+            }
+            if (powerMap[column][row + 1] != null) {
+                stack.add(new SimpleEntry<>(column, row + 1));
+            }
+            if (powerMap[column][row - 1] != null) {
+                stack.add(new SimpleEntry<>(column, row - 1));
+            }
         } catch (final ArrayIndexOutOfBoundsException exception) {
             // swallow
         }

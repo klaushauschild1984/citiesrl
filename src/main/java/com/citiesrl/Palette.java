@@ -44,6 +44,14 @@ public interface Palette {
 
         }
 
+        interface Road {
+
+            Color ASPHALT = new Color(0, 0, 0);
+
+            Color MARKS = new Color(255, 255, 255);
+
+        }
+
     }
 
 }
