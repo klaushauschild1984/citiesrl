@@ -10,7 +10,7 @@ I try to re-interpret the old SimCity classic. There is no connection to its ope
 # Controls
 * arrow keys or WASD
   * move the terrain by three tiles
-* CRTL + arrow keys or WASD
+* CTRL + arrow keys or WASD
   * move the terrain by nine tiles
 * space
   * pause simulation
@@ -27,3 +27,7 @@ I try to re-interpret the old SimCity classic. There is no connection to its ope
 
 # Show Case
 [![Cities RL 13.03.2018](https://i.ytimg.com/vi/HwibDeVT0ro/2.jpg)](https://youtu.be/HwibDeVT0ro)
+
+# TODOs
+Here I list all stuff I am currently working on:
+* add user interactions to place entities
