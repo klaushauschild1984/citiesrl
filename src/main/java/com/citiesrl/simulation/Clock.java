@@ -15,6 +15,7 @@
 package com.citiesrl.simulation;
 
 import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -32,7 +33,7 @@ import lombok.RequiredArgsConstructor;
 
 public class Clock implements Update, Draw, Handler {
 
-    private final DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.MEDIUM);
+    private final DateFormat dateFormat = new SimpleDateFormat("MMM yyyy");
     private final Calendar calendar = GregorianCalendar.getInstance();
 
     private Date date;
@@ -48,7 +49,7 @@ public class Clock implements Update, Draw, Handler {
     @Override
     public void draw(final BackBuffer console) {
         final String dateString =
-                        String.format("%s %s", dateFormat.format(date), speed.getSymbol());
+                        String.format("%s %s", speed.getSymbol(), dateFormat.format(date));
         console.put(dateString, 1, console.getSize().getHeight() - 1);
     }
 
@@ -97,7 +98,7 @@ public class Clock implements Update, Draw, Handler {
     @Getter
     private enum Speed {
 
-        PAUSE(".", 0),
+        PAUSE("\"", 0),
 
         NORMAL(">", 2),
 
