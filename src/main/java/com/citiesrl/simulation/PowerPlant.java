@@ -20,10 +20,11 @@ import com.citiesrl.Palette;
 import com.rl4j.BackBuffer;
 import com.rl4j.Dimension;
 
-public class PowerPlant extends Entity {
+public class PowerPlant extends Powered {
 
     public PowerPlant(final int left, final int top) {
         super("Power plant", left, top, new Dimension(3, 4));
+        setPowered(true);
     }
 
     @Override
@@ -32,6 +33,11 @@ public class PowerPlant extends Entity {
         console.put("#/#", column, row + 1, Color.YELLOW, Palette.Terrain.DIRT);
         console.put("#/#", column, row + 2, Color.YELLOW, Palette.Terrain.DIRT);
         console.put("###", column, row + 3, Color.YELLOW, Palette.Terrain.DIRT);
+    }
+
+    @Override
+    public boolean isPowered() {
+        return true;
     }
 
 }

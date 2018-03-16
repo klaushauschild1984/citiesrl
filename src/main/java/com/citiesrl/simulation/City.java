@@ -15,9 +15,7 @@
 package com.citiesrl.simulation;
 
 import java.awt.Color;
-import java.util.AbstractMap.SimpleEntry;
 import java.util.HashSet;
-import java.util.Map.Entry;
 import java.util.Set;
 
 import com.citiesrl.terrain.Terrain;
@@ -37,8 +35,8 @@ public class City implements Update, Draw, Handler {
     private final Clock clock = new Clock();
     @Getter
     private final Terrain terrain;
-    private final Boolean[][] powerMap;
     private final Set<Entity> entities = new HashSet<>();
+    private final Entity[][] entityMap;
 
     private boolean displayPower;
 
@@ -46,9 +44,9 @@ public class City implements Update, Draw, Handler {
         this.terrain = terrain;
         final int width = terrain.getSize().getWidth();
         final int height = terrain.getSize().getHeight();
-        powerMap = new Boolean[width][height];
-        for (int i = 0; i < width; i++) {
-            powerMap[i] = new Boolean[height];
+        entityMap = new Entity[width][height];
+        for (int column = 0; column < width; column++) {
+            entityMap[column] = new Entity[height];
         }
     }
 
@@ -81,12 +79,16 @@ public class City implements Update, Draw, Handler {
         if (displayPower) {
             for (int column = 0; column < terrain.getSize().getWidth(); column++) {
                 for (int row = 0; row < terrain.getSize().getHeight(); row++) {
-                    final Boolean power = powerMap[column][row];
-                    if (power == null) {
+                    final Entity entity = entityMap[column][row];
+                    if (entity == null) {
                         continue;
                     }
-                    renderBuffer.put('P', column - terrain.getOffsetColumn(), row, Color.WHITE,
-                                    power ? Color.GREEN : Color.RED);
+                    if (!(entity instanceof Powered)) {
+                        continue;
+                    }
+                    renderBuffer.put('P', column - terrain.getOffsetColumn() + 1,
+                                    row - terrain.getOffsetRow() + 1, Color.WHITE,
+                                    ((Powered) entity).isPowered() ? Color.GREEN : Color.RED);
                 }
             }
         }
@@ -117,92 +119,58 @@ public class City implements Update, Draw, Handler {
     public void add(final Entity entity) {
         entity.setCity(this);
         entities.add(entity);
-        updatePower(entity);
+        updateEntityMap(entity);
+        updatePower();
     }
 
-    private void updatePower(final Entity entity) {
+    private void updateEntityMap(final Entity entity) {
         for (int column = 0; column < entity.getSize().getWidth(); column++) {
             for (int row = 0; row < entity.getSize().getHeight(); row++) {
-                final int entityColumn = column + entity.getLeft();
-                final int entityRow = row + entity.getTop();
-                powerMap[entityColumn][entityRow] = entity instanceof PowerPlant;
+                final int entityColumn = column + entity.getLeft() - 1;
+                final int entityRow = row + entity.getTop() - 1;
+                entityMap[entityColumn][entityRow] = entity;
+
             }
         }
+    }
 
-        final Set<Entry<Integer, Integer>> stack = new HashSet<>();
-        for (int column = 0; column < terrain.getSize().getWidth(); column++) {
-            for (int row = 0; row < terrain.getSize().getHeight(); row++) {
-                final Boolean power = powerMap[column][row];
-                if (power != null && power) {
-                    stack.add(new SimpleEntry<>(column, row));
-                }
-            }
-        }
-
-        while (!stack.isEmpty()) {
-            final Entry<Integer, Integer> coordinates = stack.iterator().next();
-            checkPower(coordinates.getKey() - 1, coordinates.getValue(), stack);
-            checkPower(coordinates.getKey() + 1, coordinates.getValue(), stack);
-            checkPower(coordinates.getKey(), coordinates.getValue() - 1, stack);
-            checkPower(coordinates.getKey(), coordinates.getValue() + 1, stack);
-            stack.remove(coordinates);
-        }
+    private void updatePower() {
         entities.stream() //
-                        .filter(e -> e instanceof PowerConsumer) //
-                        .map(powerConsumerEntity -> (PowerConsumer) powerConsumerEntity) //
-                        .forEach(powerConsumer -> {
-                            final Boolean powerConsumerPower =
-                                            powerMap[powerConsumer.getLeft()][powerConsumer
-                                                            .getTop()];
-                            if (powerConsumerPower != null && powerConsumerPower) {
-                                powerConsumer.setPowered(true);
-                            }
-                        });
-
-        printPowerMap();
+                        .filter(entity -> entity instanceof Powered) //
+                        .map(entity -> ((Powered) entity)) //
+                        .forEach(powered -> powered.setPowered(false));
+        entities.stream() //
+                        .filter(entity -> entity instanceof PowerPlant) //
+                        .map(entity -> ((PowerPlant) entity)) //
+                        .forEach(this::updatePower);
     }
 
-    private void printPowerMap() {
-        for (int column = 0; column < terrain.getSize().getWidth(); column++) {
-            for (int row = 0; row < terrain.getSize().getHeight(); row++) {
-                final Boolean power = powerMap[column][row];
-                if (power == null) {
-                    System.out.print(" ");
-                } else {
-                    System.out.print(power ? "1" : "0");
+    private void updatePower(final Powered powerSource) {
+        for (int column = 0; column < powerSource.getSize().getWidth() + 2; column++) {
+            for (int row = 0; row < powerSource.getSize().getHeight() + 2; row++) {
+                try {
+                    final int entityColumn = (powerSource.getLeft() - 1) + (column - 1);
+                    final int entityRow = (powerSource.getTop() - 1) + (row - 1);
+                    final Entity entity = entityMap[entityColumn][entityRow];
+                    if (entity == null) {
+                        continue;
+                    }
+                    if (!(entity instanceof Powered)) {
+                        continue;
+                    }
+                    final Powered powered = (Powered) entity;
+                    if (powered == powerSource) {
+                        continue;
+                    }
+                    if (powered.isPowered()) {
+                        continue;
+                    }
+                    powered.setPowered(true);
+                    updatePower(powered);
+                } catch (final ArrayIndexOutOfBoundsException exception) {
+                    continue;
                 }
             }
-            System.out.println();
-        }
-    }
-
-    // TODO works but un-elegant
-    private void checkPower(final int column, final int row,
-                    final Set<Entry<Integer, Integer>> stack) {
-        try {
-            final Boolean power = powerMap[column][row];
-            if (power == null) {
-                return;
-            }
-            if (power) {
-                return;
-            }
-            powerMap[column][row] = true;
-            // TODO will cause problems at the borders
-            if (powerMap[column + 1][row] != null) {
-                stack.add(new SimpleEntry<>(column + 1, row));
-            }
-            if (powerMap[column - 1][row] != null) {
-                stack.add(new SimpleEntry<>(column - 1, row));
-            }
-            if (powerMap[column][row + 1] != null) {
-                stack.add(new SimpleEntry<>(column, row + 1));
-            }
-            if (powerMap[column][row - 1] != null) {
-                stack.add(new SimpleEntry<>(column, row - 1));
-            }
-        } catch (final ArrayIndexOutOfBoundsException exception) {
-            // swallow
         }
     }
 

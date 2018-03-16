@@ -61,7 +61,7 @@ public class CitiesRL implements GameObject {
                         (int) (size.getHeight() * 1.5));
         terrain = new Terrain(terrainSize, size, random);
         city = new City(terrain);
-        city.add(new Zone(Zone.Type.RESIDENTIAL, 9, 4));
+        city.add(new Zone(Zone.Type.RESIDENTIAL, 9, 3));
         city.add(new PowerPlant(13, 3));
         city.add(new Road(15, 7));
         city.add(new Road(14, 7));
@@ -70,6 +70,8 @@ public class CitiesRL implements GameObject {
         city.add(new Road(11, 7));
         city.add(new Road(10, 7));
         city.add(new Road(9, 7));
+        city.add(new Zone(Zone.Type.INDUSTRIAL, 9, 8));
+        city.add(new Zone(Zone.Type.COMMERCIAL, 16, 4));
         roguelike.getCursor().setBlinkInterval(0);
     }
 

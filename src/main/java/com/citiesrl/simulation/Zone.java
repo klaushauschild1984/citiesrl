@@ -20,10 +20,11 @@ import com.citiesrl.Palette;
 import com.rl4j.BackBuffer;
 import com.rl4j.Dimension;
 import com.rl4j.event.Event;
+
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
-public class Zone extends PowerConsumer {
+public class Zone extends Powered {
 
     private final Type type;
 
@@ -42,7 +43,7 @@ public class Zone extends PowerConsumer {
         console.put("└─┘", column, row + 2, type.getColor(), Palette.Terrain.DIRT);
 
         if (!isPowered() && powerBlink) {
-            console.put('Z', column + 1, row + 1, Color.BLACK, Color.YELLOW);
+            console.put('?', column + 1, row + 1, Color.BLACK, Color.YELLOW);
         }
     }
 

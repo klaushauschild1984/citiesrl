@@ -15,16 +15,17 @@
 package com.citiesrl.simulation;
 
 import com.rl4j.Dimension;
+
 import lombok.Getter;
 import lombok.Setter;
 
-abstract class PowerConsumer extends Entity {
+abstract class Powered extends Entity {
 
     @Getter
     @Setter
     private boolean powered;
 
-    PowerConsumer(final String name, final int left, final int top, final Dimension size) {
+    Powered(final String name, final int left, final int top, final Dimension size) {
         super(name, left, top, size);
     }
 

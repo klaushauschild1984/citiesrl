@@ -18,7 +18,7 @@ import com.citiesrl.Palette;
 import com.rl4j.BackBuffer;
 import com.rl4j.Dimension;
 
-public class Road extends Entity {
+public class Road extends Powered {
 
     public Road(final int left, final int top) {
         super("Road", left, top, new Dimension(1, 1));
