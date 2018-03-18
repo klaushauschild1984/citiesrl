@@ -14,7 +14,7 @@
 
 package com.citiesrl.terrain;
 
-enum Ground {
+public enum Ground {
 
     DIRT,
 

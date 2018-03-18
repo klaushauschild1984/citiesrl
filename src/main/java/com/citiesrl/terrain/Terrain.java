@@ -46,12 +46,10 @@ public class Terrain implements Update, Draw, Handler {
     private int offsetRow;
     private int moveIncrement = 3;
 
-    private float time;
-
     public Terrain(final Dimension size, final Dimension consoleSize, final Random random) {
         tiles = new Tile[size.getWidth()][size.getHeight()];
         offsetMaxColumn = size.getWidth() - (consoleSize.getWidth() - 2);
-        offsetMaxRow = size.getHeight() - (consoleSize.getHeight() - 2);
+        offsetMaxRow = size.getHeight() - (consoleSize.getHeight() - 3);
         this.random = random;
         boolean first = true;
         do {
@@ -100,7 +98,7 @@ public class Terrain implements Update, Draw, Handler {
     public void draw(final BackBuffer console) {
         final Dimension consoleSize = console.getSize();
         for (int column = 1; column < consoleSize.getWidth() - 1; column++) {
-            for (int row = 1; row < consoleSize.getHeight() - 1; row++) {
+            for (int row = 1; row < consoleSize.getHeight() - 2; row++) {
                 final Tile tile = tiles[offsetColumn + column - 1][offsetRow + row - 1];
                 switch (tile.getGround()) {
                     case DIRT:
@@ -179,6 +177,14 @@ public class Terrain implements Update, Draw, Handler {
                 }
                 tile.setDecoration(random.nextFloat() < 0.25);
             }
+        }
+    }
+
+    public Tile get(final int column, final int row) {
+        try {
+            return tiles[column + offsetColumn - 1][row + offsetRow - 1];
+        } catch (final ArrayIndexOutOfBoundsException exception) {
+            return null;
         }
     }
 

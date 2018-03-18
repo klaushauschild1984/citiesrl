@@ -20,7 +20,7 @@ import lombok.Setter;
 
 @RequiredArgsConstructor
 @Getter
-class Tile {
+public class Tile {
 
     private final Ground ground;
 
