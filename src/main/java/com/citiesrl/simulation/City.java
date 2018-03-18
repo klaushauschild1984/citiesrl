@@ -27,6 +27,7 @@ import com.rl4j.event.Event;
 import com.rl4j.event.Handler;
 import com.rl4j.event.KeyboardEvent;
 import com.rl4j.event.KeyboardEvent.Key;
+import com.rl4j.ui.sprite.Sprite;
 
 import lombok.Getter;
 
@@ -53,28 +54,11 @@ public class City implements Update, Draw, Handler {
     @Override
     public void draw(final BackBuffer console) {
         clock.draw(console);
-        // TODO use sub buffer if available
-        final BackBuffer renderBuffer = new BackBuffer(console.getSize()) {
 
-            @Override
-            public void put(final char c, final int column, final int row, final Color foreground,
-                            final Color background) {
-                if (!contains(column, row)) {
-                    return;
-                }
-                console.put(c, column, row, foreground, background);
-            }
-
-            @Override
-            public boolean contains(final int column, final int row) {
-                final Dimension size = console.getSize();
-                return column >= 1 && column <= console.getSize().getWidth() - 1 && row >= 1
-                                && row <= size.getHeight() - 1;
-            }
-
-        };
+        final Sprite cityConsole = new Sprite(1, 1, new Dimension(console.getSize().getWidth() - 2,
+                        console.getSize().getHeight() - 3), false);
         entities.forEach(entity -> {
-            entity.draw(renderBuffer);
+            entity.draw(cityConsole);
         });
         if (displayPower) {
             for (int column = 0; column < terrain.getSize().getWidth(); column++) {
@@ -86,12 +70,13 @@ public class City implements Update, Draw, Handler {
                     if (!(entity instanceof Powered)) {
                         continue;
                     }
-                    renderBuffer.put('P', column - terrain.getOffsetColumn() + 1,
+                    cityConsole.put('P', column - terrain.getOffsetColumn() + 1,
                                     row - terrain.getOffsetRow() + 1, Color.WHITE,
                                     ((Powered) entity).isPowered() ? Color.GREEN : Color.RED);
                 }
             }
         }
+        cityConsole.draw(console);
     }
 
     @Override
