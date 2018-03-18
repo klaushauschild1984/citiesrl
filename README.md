@@ -31,3 +31,4 @@ I try to re-interpret the old SimCity classic. There is no connection to its ope
 # TODOs
 Here I list all stuff I am currently working on:
 * add user interactions to place entities
+* render roads according to their neighbours

@@ -70,8 +70,8 @@ public class City implements Update, Draw, Handler {
                     if (!(entity instanceof Powered)) {
                         continue;
                     }
-                    cityConsole.put('P', column - terrain.getOffsetColumn() + 1,
-                                    row - terrain.getOffsetRow() + 1, Color.WHITE,
+                    cityConsole.put('P', column - terrain.getOffsetColumn(),
+                                    row - terrain.getOffsetRow(), Color.WHITE,
                                     ((Powered) entity).isPowered() ? Color.GREEN : Color.RED);
                 }
             }
@@ -111,8 +111,8 @@ public class City implements Update, Draw, Handler {
     private void updateEntityMap(final Entity entity) {
         for (int column = 0; column < entity.getSize().getWidth(); column++) {
             for (int row = 0; row < entity.getSize().getHeight(); row++) {
-                final int entityColumn = column + entity.getLeft() - 1;
-                final int entityRow = row + entity.getTop() - 1;
+                final int entityColumn = column + entity.getLeft();
+                final int entityRow = row + entity.getTop();
                 entityMap[entityColumn][entityRow] = entity;
 
             }
@@ -134,8 +134,8 @@ public class City implements Update, Draw, Handler {
         for (int column = 0; column < powerSource.getSize().getWidth() + 2; column++) {
             for (int row = 0; row < powerSource.getSize().getHeight() + 2; row++) {
                 try {
-                    final int entityColumn = (powerSource.getLeft() - 1) + (column - 1);
-                    final int entityRow = (powerSource.getTop() - 1) + (row - 1);
+                    final int entityColumn = powerSource.getLeft() + (column - 1);
+                    final int entityRow = powerSource.getTop() + (row - 1);
                     final Entity entity = entityMap[entityColumn][entityRow];
                     if (entity == null) {
                         continue;
@@ -156,6 +156,15 @@ public class City implements Update, Draw, Handler {
                     continue;
                 }
             }
+        }
+    }
+
+    public Entity get(final int column, final int row) {
+        try {
+            return entityMap[column + terrain.getOffsetColumn() - 1][row + terrain.getOffsetRow()
+                            - 1];
+        } catch (final ArrayIndexOutOfBoundsException exception) {
+            return null;
         }
     }
 

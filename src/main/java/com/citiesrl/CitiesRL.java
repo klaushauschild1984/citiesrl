@@ -18,7 +18,9 @@ import java.awt.Color;
 import java.util.Random;
 
 import com.citiesrl.simulation.City;
+import com.citiesrl.simulation.Entity;
 import com.citiesrl.simulation.PowerPlant;
+import com.citiesrl.simulation.Powered;
 import com.citiesrl.simulation.Road;
 import com.citiesrl.simulation.Zone;
 import com.citiesrl.terrain.Terrain;
@@ -110,7 +112,17 @@ public class CitiesRL implements GameObject {
 
                             final Tile tile = terrain.get(column, row);
                             if (tile != null) {
-                                statusLine = tile.getGround().name();
+                                final Entity entity = city.get(column, row);
+                                if (entity != null) {
+                                    statusLine = entity.getName();
+                                    if (entity instanceof Powered) {
+                                        if (!((Powered) entity).isPowered()) {
+                                            statusLine += " (not powered)";
+                                        }
+                                    }
+                                } else {
+                                    statusLine = tile.getGround().name();
+                                }
                             } else {
                                 statusLine = "";
                             }

@@ -23,7 +23,6 @@
     </appender>
 
     <logger name="com.citiesrl" level="debug"/>
-    <logger name="com.rl4j.Console" level="debug"/>
 
     <root level="error">
         <appender-ref ref="STDOUT"/>

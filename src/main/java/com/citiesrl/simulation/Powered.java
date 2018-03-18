@@ -19,7 +19,7 @@ import com.rl4j.Dimension;
 import lombok.Getter;
 import lombok.Setter;
 
-abstract class Powered extends Entity {
+public abstract class Powered extends Entity {
 
     @Getter
     @Setter
