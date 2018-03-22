@@ -14,6 +14,8 @@
 
 package com.citiesrl;
 
+import java.util.Random;
+import com.citiesrl.terrain.Terrain;
 import com.rl4j.BackBuffer;
 import com.rl4j.Dimension;
 import com.rl4j.GameObject;
@@ -30,19 +32,26 @@ public class CitiesRL2 implements GameObject {
     private final Canvas controlsCanvas;
     private final Canvas statusCanvas;
     private final Canvas mainCanvas;
+    private final Terrain terrain;
 
-    public CitiesRL2(final Roguelike roguelike, final Long randomSeed) {
+    public CitiesRL2(final Roguelike roguelike, final Random random) {
         roguelike.getCursor().setBlinkInterval(0);
-        controlsCanvas = new Canvas(0, 0, CONTROLS_WIDTH,
-                        roguelike.getSize().getHeight() - STATUS_HEIGHT);
-        statusCanvas = new Canvas(0, roguelike.getSize().getHeight() - STATUS_HEIGHT,
-                        roguelike.getSize().getWidth(), STATUS_HEIGHT);
-        mainCanvas = new Canvas(CONTROLS_WIDTH, 0, roguelike.getSize().getWidth() - CONTROLS_WIDTH,
-                        roguelike.getSize().getHeight() - STATUS_HEIGHT);
+        final Dimension size = roguelike.getSize();
+        controlsCanvas = new Canvas(0, 0, CONTROLS_WIDTH, size.getHeight() - STATUS_HEIGHT);
+        statusCanvas = new Canvas(0, size.getHeight() - STATUS_HEIGHT, size.getWidth(),
+                        STATUS_HEIGHT);
+        mainCanvas = new Canvas(CONTROLS_WIDTH, 0, size.getWidth() - CONTROLS_WIDTH,
+                        size.getHeight() - STATUS_HEIGHT);
+
+        final Dimension terrainSize = new Dimension((int) (size.getWidth() * 1.5),
+                        (int) (size.getHeight() * 1.5));
+        terrain = new Terrain(terrainSize, size, random);
     }
 
     @Override
     public void draw(final BackBuffer console) {
+        terrain.draw(mainCanvas.console);
+
         controlsCanvas.draw(console);
         statusCanvas.draw(console);
         mainCanvas.draw(console);
@@ -55,26 +64,22 @@ public class CitiesRL2 implements GameObject {
 
     @Override
     public void handle(final Event event) {
-
+        terrain.handle(event);
     }
 
     private static class Canvas extends Box {
 
-        private final Sprite canvas;
+        private final Sprite console;
 
-        public Canvas(final int column, final int row, final int width, final int height) {
+        Canvas(final int column, final int row, final int width, final int height) {
             super(column, row, width, height);
-            canvas = new Sprite(row + 1, column + 1, new Dimension(width - 1, height - 1), false);
+            console = new Sprite(row + 1, column + 1, new Dimension(width - 2, height - 2), false);
         }
 
         @Override
         public void draw(final BackBuffer console) {
             super.draw(console);
-            canvas.draw(console);
-        }
-
-        public BackBuffer getCanvas() {
-            return canvas;
+            this.console.draw(console);
         }
 
     }

@@ -14,6 +14,7 @@
 
 package com.citiesrl;
 
+import java.util.Random;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.Option;
@@ -21,6 +22,9 @@ import org.kohsuke.args4j.Option;
 import com.rl4j.Dimension;
 import com.rl4j.Roguelike;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 public class Main {
 
     public static void main(final String[] args) throws CmdLineException {
@@ -32,11 +36,21 @@ public class Main {
                         .title("Cities RL") //
                         .borderless(true) //
                         .fpsLimit(30) //
-                        .size(new Dimension(40, 30)) //
+                        .size(new Dimension(80, 40)) //
                         .nativeCursor(true) //
                         .build();
-        final CitiesRL2 citiesRL = new CitiesRL2(roguelike, arguments.randomSeed);
+        final CitiesRL2 citiesRL = new CitiesRL2(roguelike, getRandom(arguments.randomSeed));
         roguelike.start(citiesRL);
+    }
+
+    private static Random getRandom(final Long randomSeed) {
+        if (randomSeed == null) {
+            final long currentTimeMillis = System.currentTimeMillis();
+            log.info("Random seed: {}", currentTimeMillis);
+            return new Random(currentTimeMillis);
+        }
+        log.info("Given seed: {}", randomSeed);
+        return new Random(randomSeed);
     }
 
     static class Arguments {

@@ -49,7 +49,7 @@ public class Terrain implements Update, Draw, Handler {
     public Terrain(final Dimension size, final Dimension consoleSize, final Random random) {
         tiles = new Tile[size.getWidth()][size.getHeight()];
         offsetMaxColumn = size.getWidth() - (consoleSize.getWidth() - 2);
-        offsetMaxRow = size.getHeight() - (consoleSize.getHeight() - 3);
+        offsetMaxRow = size.getHeight() - (consoleSize.getHeight() - 2);
         this.random = random;
         boolean first = true;
         do {
@@ -97,9 +97,9 @@ public class Terrain implements Update, Draw, Handler {
     @Override
     public void draw(final BackBuffer console) {
         final Dimension consoleSize = console.getSize();
-        for (int column = 1; column < consoleSize.getWidth() - 1; column++) {
-            for (int row = 1; row < consoleSize.getHeight() - 2; row++) {
-                final Tile tile = tiles[offsetColumn + column - 1][offsetRow + row - 1];
+        for (int column = 0; column < consoleSize.getWidth(); column++) {
+            for (int row = 0; row < consoleSize.getHeight(); row++) {
+                final Tile tile = tiles[offsetColumn + column][offsetRow + row];
                 switch (tile.getGround()) {
                     case DIRT:
                         final char dirt = tile.isDecoration() ? '.' : ' ';
@@ -182,7 +182,7 @@ public class Terrain implements Update, Draw, Handler {
 
     public Tile get(final int column, final int row) {
         try {
-            return tiles[column + offsetColumn - 1][row + offsetRow - 1];
+            return tiles[column + offsetColumn][row + offsetRow];
         } catch (final ArrayIndexOutOfBoundsException exception) {
             return null;
         }

@@ -60,7 +60,7 @@ public class CitiesRL implements GameObject {
         }
         final Dimension size = roguelike.getSize();
         gameBorder = new Box(0, 0, size.getWidth(), size.getHeight());
-        gameBorder.setTitle("Cities RL");
+        gameBorder.withTitle("Cities RL");
         final Dimension terrainSize = new Dimension((int) (size.getWidth() * 1.5),
                         (int) (size.getHeight() * 1.5));
         terrain = new Terrain(terrainSize, size, random);
