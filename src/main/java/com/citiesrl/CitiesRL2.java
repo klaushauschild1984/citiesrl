@@ -15,27 +15,37 @@
 package com.citiesrl;
 
 import com.rl4j.BackBuffer;
+import com.rl4j.Dimension;
 import com.rl4j.GameObject;
 import com.rl4j.Roguelike;
 import com.rl4j.event.Event;
 import com.rl4j.ui.Box;
+import com.rl4j.ui.sprite.Sprite;
 
 public class CitiesRL2 implements GameObject {
 
-    public static final int CONTROLLS_WIDTH = 7;
-    public static final int STATUS_HEIGHT = 7;
+    private static final int CONTROLS_WIDTH = 7;
+    private static final int STATUS_HEIGHT = 7;
+
+    private final Canvas controlsCanvas;
+    private final Canvas statusCanvas;
+    private final Canvas mainCanvas;
 
     public CitiesRL2(final Roguelike roguelike, final Long randomSeed) {
         roguelike.getCursor().setBlinkInterval(0);
+        controlsCanvas = new Canvas(0, 0, CONTROLS_WIDTH,
+                        roguelike.getSize().getHeight() - STATUS_HEIGHT);
+        statusCanvas = new Canvas(0, roguelike.getSize().getHeight() - STATUS_HEIGHT,
+                        roguelike.getSize().getWidth(), STATUS_HEIGHT);
+        mainCanvas = new Canvas(CONTROLS_WIDTH, 0, roguelike.getSize().getWidth() - CONTROLS_WIDTH,
+                        roguelike.getSize().getHeight() - STATUS_HEIGHT);
     }
 
     @Override
     public void draw(final BackBuffer console) {
-        new Box(0, 0, CONTROLLS_WIDTH, console.getSize().getHeight() - STATUS_HEIGHT).draw(console);
-        new Box(0, console.getSize().getHeight() - STATUS_HEIGHT, console.getSize().getWidth(),
-                        STATUS_HEIGHT).draw(console);
-        new Box(CONTROLLS_WIDTH, 0, console.getSize().getWidth() - CONTROLLS_WIDTH,
-                        console.getSize().getHeight() - STATUS_HEIGHT).draw(console);
+        controlsCanvas.draw(console);
+        statusCanvas.draw(console);
+        mainCanvas.draw(console);
     }
 
     @Override
@@ -45,6 +55,27 @@ public class CitiesRL2 implements GameObject {
 
     @Override
     public void handle(final Event event) {
+
+    }
+
+    private static class Canvas extends Box {
+
+        private final Sprite canvas;
+
+        public Canvas(final int column, final int row, final int width, final int height) {
+            super(column, row, width, height);
+            canvas = new Sprite(row + 1, column + 1, new Dimension(width - 1, height - 1), false);
+        }
+
+        @Override
+        public void draw(final BackBuffer console) {
+            super.draw(console);
+            canvas.draw(console);
+        }
+
+        public BackBuffer getCanvas() {
+            return canvas;
+        }
 
     }
 
